@@ -24,7 +24,7 @@ def preprocess_img(img, patch_shape, stride_shape):
 def preprocess_label(label, patch_shape, stride_shape):
     assert patch_shape == stride_shape
     label = pad(label, patch_shape, 0)
-    label = np.clip(label, 1)
+    label = np.clip(label, 0, 1)
     return label
 
 
