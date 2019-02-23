@@ -76,7 +76,8 @@ class SingleImagePatchSequence(Sequence):
             label_lis.append(self.label[i[k]:i[k] + self.patch_shape[0], \
                 j[k]:j[k] + self.patch_shape[1]])
 
-        return np.array(img_lis), np.array(label_lis)
+        return np.array(img_lis)[..., np.newaxis], np.array(
+            label_lis)[..., np.newaxis]
 
     def on_epoch_end(self):
         if self.randomize:
