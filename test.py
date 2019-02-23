@@ -24,15 +24,17 @@ class PatchSequence(Sequence):
         self.cum_lengths = np.cumsum(self.sub_lengths)
         self.total_length = self.cum_lengths[-1]
 
-        self.cum_lengths[-1] = 0  # so -1 gives correct answer
-
     def __len__(self):
         return self.total_length
 
     def __getitem__(self, idx):
         sub_idx = bisect(self.cum_lengths, idx)
+        if sub_idx == 0:
+            sub_sub_idx = idx
+        else:
+            sub_sub_idx = idx - self.cum_lengths[sub_idx - 1]
 
-        sub_sub_idx = idx - self.cum_lengths[sub_idx - 1]
+        #print(idx, sub_idx, sub_sub_idx)
 
         return self.sub_sequences[sub_idx][sub_sub_idx]
 
@@ -52,7 +54,6 @@ if __name__ == "__main__":
         dataset_paths.append(next(it))
 
     seq = PatchSequence.from_path_list(dataset_paths, batch_size=16)
-
-    print(len(seq))
-    x, y = seq[15]
-    print(x.shape)
+    #print(seq.cum_lengths)
+    for i, e in enumerate(seq):
+        pass
