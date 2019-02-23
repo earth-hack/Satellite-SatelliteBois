@@ -127,7 +127,6 @@ def parse_dataset():
         # is_inside(satelite_feat, patches[-1])
         img, labels = get_image_and_labels(satelite_feat, patches)
 
-        0 / 0
         parsed_data_dir.joinpath(p.stem).mkdir(exist_ok=True)
         np.save(parsed_data_dir.joinpath(p.stem, 'img.npy'), img)
         np.save(parsed_data_dir.joinpath(p.stem, 'label.npy'), labels)
