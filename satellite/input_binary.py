@@ -1,4 +1,6 @@
 import pathlib
+from matplotlib import gridspec
+import matplotlib.pyplot as plt
 import keras
 from skimage.external.tifffile import imread
 from tqdm import tqdm
@@ -80,3 +82,40 @@ predictions = model.predict_generator(
     datagen.flow(test_x, batch_size=1), steps=test_y.shape[0])
 accuracy = (predictions.argmax(axis=1) == test_y.argmax(axis=1)).mean()
 print(accuracy)
+'''
+Experiments, for visualization.
+'''
+0 / 0
+
+n = 5
+plt.figure(figsize=(n, n))
+gs = gridspec.GridSpec(n, n)
+gs.update(wspace=0.0, hspace=0.0)  # set the spacing between axes.
+for i in range(n * n):
+    ax = plt.subplot(gs[i])
+    plt.axis('on')
+    ax.set_xticklabels([])
+    ax.set_yticklabels([])
+    ax.set_aspect('equal')
+    o = np.random.randint(1, 900)  # offset
+    p = model.predict(test_x[o + i][None, ...])
+    label = test_y[o + i]
+
+    p = p.argmax()
+    label = label.argmax()
+
+    if p == 1 and label == 0:  # false positive
+        cmap = 'Reds_r'
+        print('red')
+    if p == 1 and label == 1:
+        cmap = 'Greens_r'
+    if p == 0 and label == 0:
+        cmap = 'Purples_r'
+    if p == 0 and label == 1:
+        cmap = 'Oranges_r'
+        print('orange')
+
+    ax.imshow(test_x[i].squeeze(), cmap=cmap)
+
+plt.show()
+plt.gcf().savefig('/tmp/figure.png')
