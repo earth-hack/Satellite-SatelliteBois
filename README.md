@@ -1,2 +1,4 @@
-# eage_satelite
-hackathon, Kuala Lumpur
+# Task 11. Team: satellitebois
+
+To run, use `python3 satellites/input_binary.py`.
+
