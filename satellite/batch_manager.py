@@ -56,16 +56,33 @@ class SingleImagePatchSequence(Sequence):
 
         self.on_epoch_end()
 
+        self.mapping = []
+        k = 0
+        for i in range(len(self)):
+            _, y = self.get_absolute(i)
+
+            if y.argmax(3).sum() > 0:
+                self.mapping.append(i)
+
+        if not self.mapping:
+            self.N = 0
+        else:
+            self.N = len(self.mapping)
+
     def __len__(self):
         return (self.N + self.batch_size - 1) // self.batch_size
 
     def __getitem__(self, idx):
+        idx = self.mapping[idx]
+        return self.get_absolute(idx)
+
+    def get_absolute(self, idx):
         img_lis = []
         label_lis = []
 
         idx *= self.batch_size
-
         idxs = self.idxs[idx:idx + self.batch_size]
+
         i, j = np.divmod(idxs, self.n_cols)
         i *= self.patch_shape[0]
         j *= self.patch_shape[1]
