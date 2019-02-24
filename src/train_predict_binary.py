@@ -80,6 +80,7 @@ model.fit_generator(
 predictions = model.predict_generator(
     datagen.flow(test_x, batch_size=1), steps=test_y.shape[0])
 accuracy = (predictions.argmax(axis=1) == test_y.argmax(axis=1)).mean()
+print()
 print("Accuracy:", accuracy)
 '''
 Experiments, for visualization.
@@ -112,6 +113,12 @@ for i in range(n * n):
         cmap = 'Oranges_r'
 
     ax.imshow(test_x[i].squeeze(), cmap=cmap)
+
+print("Red: False Positive")
+print("Green: True Positive")
+print("Purple: True Negative")
+print("Orange: False Negative")
+print()
 
 plt.show()
 plt.gcf().savefig('figures/figure.png')
