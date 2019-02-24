@@ -20,5 +20,5 @@ TODO add description
 
 To run:
 1.  Place the data files in `./data`
-2. `python3 src/input_binary.py`
+2. `python3 src/train_predict_binary.py`
 

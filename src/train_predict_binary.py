@@ -69,7 +69,7 @@ model.fit_generator(
     steps_per_epoch=train_y.shape[0] // batch_size,
     epochs=100,
     callbacks=[
-        keras.callbacks.ModelCheckpoint('/tmp/model.{epoch:03d}.hdf5'),
+        keras.callbacks.ModelCheckpoint('weights/model.{epoch:03d}.hdf5'),
         keras.callbacks.EarlyStopping(patience=3),
         keras.callbacks.TensorBoard(),
     ],
@@ -114,4 +114,4 @@ for i in range(n * n):
     ax.imshow(test_x[i].squeeze(), cmap=cmap)
 
 plt.show()
-plt.gcf().savefig('/tmp/figure.png')
+plt.gcf().savefig('figures/figure.png')
