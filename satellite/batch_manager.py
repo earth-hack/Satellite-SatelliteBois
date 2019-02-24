@@ -1,6 +1,6 @@
 import numpy as np
 
-from keras.utils import Sequence
+from keras.utils import Sequence, to_categorical
 
 
 def pad(img, patch_shape, value=255):
@@ -25,6 +25,7 @@ def preprocess_label(label, patch_shape, stride_shape):
     assert patch_shape == stride_shape
     label = pad(label, patch_shape, 0)
     label = np.clip(label, 0, 1)
+    label = to_categorical(label, 2)
     return label
 
 
