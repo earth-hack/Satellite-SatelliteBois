@@ -3,45 +3,7 @@ from pathlib import Path
 from matplotlib import pyplot as plt
 import numpy as np
 
-from bisect import bisect
-
-from keras.utils import Sequence
-
-from satellite.batch_manager import SingleImagePatchSequence
-
-
-class PatchSequence(Sequence):
-    @classmethod
-    def from_path_list(cls, path_list, batch_size=16):
-        return cls([
-            SingleImagePatchSequence(path, batch_size=batch_size)
-            for path in path_list
-        ])
-
-    def __init__(self, sub_sequences):
-        self.sub_sequences = sub_sequences
-        self.sub_lengths = np.array([len(sub) for sub in sub_sequences])
-        self.cum_lengths = np.cumsum(self.sub_lengths)
-        self.total_length = self.cum_lengths[-1]
-
-    def __len__(self):
-        return self.total_length
-
-    def __getitem__(self, idx):
-        sub_idx = bisect(self.cum_lengths, idx)
-        if sub_idx == 0:
-            sub_sub_idx = idx
-        else:
-            sub_sub_idx = idx - self.cum_lengths[sub_idx - 1]
-
-        #print(idx, sub_idx, sub_sub_idx)
-
-        return self.sub_sequences[sub_idx][sub_sub_idx]
-
-    def on_epoch_end(self):
-        for sub in self.sub_sequences:
-            sub.on_epoch_end()
-
+from satellite.batch_manager import PatchSequence
 
 if __name__ == "__main__":
     np.random.seed(0)
@@ -50,10 +12,14 @@ if __name__ == "__main__":
     dataset_paths = []
 
     it = parent_path.iterdir()
-    for _ in range(5):
+    for _ in range(10):
         dataset_paths.append(next(it))
 
     seq = PatchSequence.from_path_list(dataset_paths, batch_size=16)
-    #print(seq.cum_lengths)
+    #print(len(seq.sub_sequences))
+
+    print(seq.cum_lengths)
+    print(seq.sub_lengths)
     for i, e in enumerate(seq):
-        pass
+        for j, s in enumerate(e):
+            print(i, j)

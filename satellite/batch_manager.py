@@ -1,3 +1,4 @@
+from bisect import bisect
 import numpy as np
 
 from keras.utils import Sequence, to_categorical
@@ -100,3 +101,39 @@ class SingleImagePatchSequence(Sequence):
     def on_epoch_end(self):
         if self.randomize:
             np.random.shuffle(self.idxs)
+
+
+class PatchSequence(Sequence):
+    @classmethod
+    def from_path_list(cls, path_list, batch_size=16):
+        return cls([
+            SingleImagePatchSequence(path, batch_size=batch_size)
+            for path in path_list
+        ])
+
+    def __init__(self, sub_sequences):
+        self.sub_sequences = []
+        for seq in sub_sequences:
+            if len(seq) != 0:
+                self.sub_sequences.append(seq)
+
+        self.sub_lengths = np.array([len(sub) for sub in self.sub_sequences])
+        self.cum_lengths = np.cumsum(self.sub_lengths)
+        self.total_length = self.cum_lengths[-1]
+
+    def __len__(self):
+        return self.total_length
+
+    def __getitem__(self, idx):
+        sub_idx = bisect(self.cum_lengths, idx)
+
+        if sub_idx == 0:
+            sub_sub_idx = idx
+        else:
+            sub_sub_idx = idx - self.cum_lengths[sub_idx - 1]
+
+        return self.sub_sequences[sub_idx][sub_sub_idx]
+
+    def on_epoch_end(self):
+        for sub in self.sub_sequences:
+            sub.on_epoch_end()
