@@ -80,11 +80,10 @@ model.fit_generator(
 predictions = model.predict_generator(
     datagen.flow(test_x, batch_size=1), steps=test_y.shape[0])
 accuracy = (predictions.argmax(axis=1) == test_y.argmax(axis=1)).mean()
-print(accuracy)
+print("Accuracy:", accuracy)
 '''
 Experiments, for visualization.
 '''
-0 / 0
 
 n = 5
 plt.figure(figsize=(n, n))
