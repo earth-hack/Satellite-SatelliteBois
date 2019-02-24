@@ -64,6 +64,8 @@ class SingleImagePatchSequence(Sequence):
 
             if y.argmax(3).sum() > 0:
                 self.mapping.append(i)
+            elif np.random.rand() > 0.9:
+                self.mapping.append(i)
 
         if not self.mapping:
             self.N = 0
@@ -75,7 +77,9 @@ class SingleImagePatchSequence(Sequence):
 
     def __getitem__(self, idx):
         idx = self.mapping[idx]
-        return self.get_absolute(idx)
+        x, y = self.get_absolute(idx)
+        binary_y = to_categorical(int(y.argmax(3).sum() > 0))
+        return x, binary_y
 
     def get_absolute(self, idx):
         img_lis = []
