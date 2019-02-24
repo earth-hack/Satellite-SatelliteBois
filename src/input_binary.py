@@ -104,14 +104,12 @@ for i in range(n * n):
 
     if p == 1 and label == 0:  # false positive
         cmap = 'Reds_r'
-        print('red')
     if p == 1 and label == 1:
         cmap = 'Greens_r'
     if p == 0 and label == 0:
         cmap = 'Purples_r'
     if p == 0 and label == 1:
         cmap = 'Oranges_r'
-        print('orange')
 
     ax.imshow(test_x[i].squeeze(), cmap=cmap)
 
