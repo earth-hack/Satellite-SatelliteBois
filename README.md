@@ -28,6 +28,7 @@ After some training we do predictions and check for the accuracy.
 ## How to run your code/app/system
 
 To run:
-1.  Place the data files in `./data`
-2. `python3 src/input_binary.py`
+1.  `cd src`
+1.  Place the data files in `src/data`
+2. `python3 train_predict_binary.py`
 
