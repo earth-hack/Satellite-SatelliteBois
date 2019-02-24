@@ -7,9 +7,7 @@ from tqdm import tqdm
 from skimage import transform
 import numpy as np
 
-from keras.layers import Conv2D, MaxPooling2D, add, concatenate, Input, Concatenate
-from keras.layers import SpatialDropout2D, Dropout, ZeroPadding2D
-from keras.layers import UpSampling2D, Conv2DTranspose, Dense, Flatten
+from keras.layers import Conv2D, MaxPooling2D, Input, Dense, Flatten
 from keras.preprocessing.image import ImageDataGenerator
 from keras.utils import to_categorical
 from sklearn.model_selection import train_test_split
@@ -48,11 +46,11 @@ test_x, valid_x, test_y, valid_y = train_test_split(test_x, test_y)
 
 datagen = ImageDataGenerator(
     featurewise_center=False,
-    featurewise_std_normalization=True,
-    width_shift_range=3,
-    zoom_range=.1,
+    featurewise_std_normalization=False,
+    width_shift_range=0,
+    zoom_range=.0,
     rotation_range=180)
-datagen.fit(train_x)
+datagen.fit(test_x)
 
 input = Input((256, 256, 1))
 x = Conv2D(128, (3, 3), padding='same', activation='relu')(input)
@@ -65,14 +63,15 @@ y = Dense(2, activation='sigmoid')(x)
 model = keras.Model(input=input, output=y)
 model.compile(keras.optimizers.Adam(), 'binary_crossentropy', metrics=['acc'])
 
-batch_size = 64
-g = model.fit_generator(
+batch_size = 32
+model.fit_generator(
     datagen.flow(train_x, train_y, batch_size=batch_size),
     steps_per_epoch=train_y.shape[0] // batch_size,
     epochs=100,
     callbacks=[
         keras.callbacks.ModelCheckpoint('/tmp/model.{epoch:03d}.hdf5'),
-        keras.callbacks.EarlyStopping(patience=3)
+        keras.callbacks.EarlyStopping(patience=3),
+        keras.callbacks.TensorBoard(),
     ],
     validation_data=datagen.flow(valid_x, valid_y, batch_size=32),
     validation_steps=valid_y.shape[0] // batch_size,
